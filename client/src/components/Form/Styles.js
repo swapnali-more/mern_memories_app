@@ -15,8 +15,23 @@ export default makeStyles((theme) => ({
     justifyContent: 'center',
   },
   fileInput: {
-    width: '97%',
-    margin: '10px 0',
+    border: '1px solid #240090',
+    borderRadius: 5,
+    position: 'relative',
+    padding: '5px',
+    '& input': {
+      opacity: 0,
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      top: 0,
+      left: 0,
+      zIndex: 1
+    },
+    '& label': {
+      color: '#240090',
+      fontSize: 14
+    }
   },
   buttonSubmit: {
     marginBottom: 10,

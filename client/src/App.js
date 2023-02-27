@@ -1,45 +1,49 @@
 import { useEffect, useState } from 'react';
-import { AppBar, Box, Container, Grid, Grow, Typography } from '@mui/material';
-import memories from "./images/memories.png"
+import { Box, Container, Grid, Grow } from '@mui/material';
 import Posts from './components/Posts/Posts';
-import Form from './components/Form/Form';
+import MemoryModal from './components/Modal/MemoryModal';
 import useStyles from "./Styles"
 import { useDispatch } from 'react-redux';
-import { fetchPosts } from "./redux/actions/posts"
+import { fetchPosts } from "./redux/actions/posts";
+import Header from './components/Header/Header';
 
-export function App() {
-  const [currentId, setCurrentId] = useState(null); // state to manage current id of a post to be edited or deleted
-  const classes = useStyles(); // use styles for the app
-  const dispatch = useDispatch(); // to dispatch an action to the store
+function App() {
+  const [currentId, setCurrentId] = useState(null);
+  const [open, setOpen] = useState(false);
+  const classes = useStyles();
+  const dispatch = useDispatch(); // Destructure dispatch
 
-  // fetching the posts from the server on mount and update
+  // Open the modal when the user clicks the "Create Memory" button
+  const handleOpen = () => setOpen(true);
+
+  // Fetch posts from server on mount and update
   useEffect(() => {
-    dispatch(fetchPosts()); // dispatch the fetchPosts action
-  }, [dispatch]); // only run effect if dispatch changes
+    dispatch(fetchPosts());
+  }, [dispatch]);
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position='static' color="inherit">
-        <Typography variant="h2" align='center' className={classes.heading}>Memories</Typography>
-        <img className={classes.image} src={memories} alt="Memories" height="60" />
-      </AppBar>
+    <Box className={classes.main}>
+      {/* Display the app header */}
+      <Header handleOpen={handleOpen} />
 
+      {/* Display the posts */}
       <Grow in>
-        <Container>
-          <Grid container justifyContent="space-between" alignItems="stretch" spacing={2}>
-            <Grid item xs={12} sm={7}>
-              {/* component to render the posts */}
-              <Posts setCurrentId={setCurrentId} />
-            </Grid>
-            <Grid item xs={12} sm={5}>
-              {/* component to render the form */}
-              <Form currentId={currentId} setCurrentId={setCurrentId} />
-            </Grid>
+        <Container maxWidth="xl">
+          <Grid container spacing={2} mt={3}>
+            <Posts setCurrentId={setCurrentId} />
           </Grid>
         </Container>
       </Grow>
+
+      {/* Display the memory modal */}
+      <MemoryModal
+        open={open}
+        setOpen={setOpen}
+        currentId={currentId}
+        setCurrentId={setCurrentId}
+      />
     </Box>
   );
 }
 
-export default App;
+export default App;  
