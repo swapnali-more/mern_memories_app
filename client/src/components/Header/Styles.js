@@ -10,4 +10,10 @@ export default makeStyles(() => ({
     image: {
         marginLeft: '15px',
     },
+    logoLink: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textDecoration: 'none'
+    }
 }))
