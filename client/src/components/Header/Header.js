@@ -1,15 +1,29 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { AppBar, Avatar, Box, Button, Toolbar, Typography } from '@mui/material';
 import MemoriesIcon from '../../images/memories.png';
 import useStyles from './Styles';
 import { Link } from 'react-router-dom';
+import MemoryForm from '../Form/MemoryForm';
+import CommonModal from '../Modal/CommonModal';
+import AuthForm from '../Form/AuthForm';
 
 const Header = () => {
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
+  const [memoryFormOpen, setMemoryFormOpen] = useState(false);
+  const [authFromOpen, setAuthFormOpen] = useState(false);
 
   // Open the modal when the user clicks the "Create Memory" button
-  const handleOpen = () => setOpen(true);
+  const handleMemoryFormOpen = () => setMemoryFormOpen(true);
+  // Open the modal when the user clicks the "Login" button
+  const handleAuthFormOpen = () => setAuthFormOpen(true);
+
+  const handleModalMemory = useCallback(( memoryFormOpen) => {
+    setMemoryFormOpen(memoryFormOpen)
+  }, [])
+
+  const handleModalAuth = useCallback(( authFromOpen) => {
+    setAuthFormOpen(authFromOpen)
+  }, [])
 
   return (
     <AppBar position="relative" color="transparent" elevation={0} className={classes.appBar}>
@@ -27,7 +41,7 @@ const Header = () => {
           color="primary"
           variant="contained"
           sx={{ mr: 1, backgroundColor: '#240090', color: '#fff' }}
-          onClick={handleOpen}
+          onClick={handleMemoryFormOpen}
         >
           Create Memory
         </Button>
@@ -39,26 +53,37 @@ const Header = () => {
         </Box>
          : */}
         <>
-        <Button
-          size="small"
-          color="secondary"
-          variant="contained"
-          sx={{ mr: 1, backgroundColor: '#240090', color: '#fff' }}
-        >
-          Register
-        </Button>
 
-        <Button
-          size="small"
-          color="secondary"
-          variant="contained"
-          sx={{ backgroundColor: '#240090', color: '#fff' }}
-        >
-          Login
-        </Button>
+          <Button
+            size="small"
+            color="secondary"
+            variant="contained"
+            sx={{ backgroundColor: '#240090', color: '#fff' }}
+            onClick={handleAuthFormOpen}
+          >
+            Login
+          </Button>
         </>
         {/* } */}
       </Box>
+
+      {/* Display the memory modal */}
+      <CommonModal
+        open={memoryFormOpen}
+        handleModal={handleModalMemory}
+      >
+        <MemoryForm
+        handleModal={handleModalMemory}
+        />
+      </CommonModal>
+      <CommonModal
+        open={authFromOpen}
+        handleModal={handleModalAuth}
+      >
+        <AuthForm
+        //handleModal={handleModal}
+        />
+      </CommonModal>
     </AppBar>
   );
 };

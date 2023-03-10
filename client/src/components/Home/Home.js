@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Container, Grid, Grow } from '@mui/material';
+import { useCallback, useEffect, useState } from 'react';
+import { Grid, Grow } from '@mui/material';
 import Posts from '../Posts/Posts';
-import MemoryModal from '../Modal/MemoryModal';
 import { useDispatch } from 'react-redux';
 import { fetchPosts } from "../../redux/actions/posts";
+import CommonModal from '../Modal/CommonModal';
+import MemoryForm from '../Form/MemoryForm';
 
 const Home = () => {
   const [currentId, setCurrentId] = useState(null);
@@ -14,23 +15,29 @@ const Home = () => {
   useEffect(() => {
     dispatch(fetchPosts());
   }, [dispatch]);
-  
+
+  const handleModal = useCallback((currentId, open) => {
+    setCurrentId(currentId)
+    setOpen(open)
+  }, [])
+
   return (
     <>
-    {/* Display the posts */}
-    <Grow in>
+      {/* Display the posts */}
+      <Grow in>
         <Grid container spacing={2} mt={3}>
-            <Posts setCurrentId={setCurrentId} />
+          <Posts setCurrentId={setCurrentId} handleModal={handleModal} />
         </Grid>
-    </Grow>
+      </Grow>
 
-    {/* Display the memory modal */}
-    <MemoryModal
-        open={open}
-        setOpen={setOpen}
-        currentId={currentId}
-        setCurrentId={setCurrentId}
-      />
+      {/* Display the memory modal */}
+      <CommonModal handleModal={handleModal}
+        currentId={currentId} open={open}>
+        <MemoryForm
+          currentId={currentId}
+          handleModal={handleModal}
+        />
+      </CommonModal>
     </>
   )
 }

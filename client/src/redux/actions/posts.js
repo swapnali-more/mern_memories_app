@@ -9,11 +9,19 @@ const ERROR_MESSAGE = 'Something went wrong. Please try again.';
  */
 export const fetchPosts = () => async (dispatch) => {
   try {
-    dispatch({ type: postActionTypes.FETCH_POSTS_REQUEST });
+    dispatch({ 
+      type: postActionTypes.FETCH_POSTS_REQUEST 
+    });
     const { data } = await api.fetchPosts();
-    dispatch({ type: postActionTypes.FETCH_POSTS_SUCCESS, payload: data });
+    dispatch({ 
+      type: postActionTypes.FETCH_POSTS_SUCCESS, 
+      payload: data 
+    });
   } catch (error) {
-    dispatch({ type: postActionTypes.FETCH_POSTS_FAILURE, payload: error.message });
+    dispatch({ 
+      type: postActionTypes.FETCH_POSTS_FAILURE, 
+      payload: error.message 
+    });
   }
 };
 
@@ -24,11 +32,19 @@ export const fetchPosts = () => async (dispatch) => {
  */
 export const createPost = (post) => async (dispatch) => {
   try {
-    dispatch({ type: postActionTypes.FETCH_POSTS_REQUEST });
+    dispatch({ 
+      type: postActionTypes.FETCH_POSTS_REQUEST 
+    });
     const { data } = await api.createPost(post);
-    dispatch({ type: postActionTypes.CREATE_POST_SUCCESS, payload: data });
+    dispatch({ 
+      type: postActionTypes.CREATE_POST_SUCCESS, 
+      payload: data 
+    });
   } catch (error) {
-    dispatch({ type: postActionTypes.CREATE_POST_FAILURE, payload: ERROR_MESSAGE });
+    dispatch({ 
+      type: postActionTypes.CREATE_POST_FAILURE, 
+      payload: ERROR_MESSAGE 
+    });
   }
 };
 
@@ -41,9 +57,15 @@ export const createPost = (post) => async (dispatch) => {
 export const updatePost = (id, post) => async (dispatch) => {
   try {
     const { data } = await api.updatePost(id, post);
-    dispatch({ type: postActionTypes.UPDATE_POST_SUCCESS, payload: data });
+    dispatch({ 
+      type: postActionTypes.UPDATE_POST_SUCCESS, 
+      payload: data 
+    });
   } catch (error) {
-    dispatch({ type: postActionTypes.UPDATE_POST_FAILURE, payload: ERROR_MESSAGE });
+    dispatch({ 
+      type: postActionTypes.UPDATE_POST_FAILURE, 
+      payload: ERROR_MESSAGE 
+    });
   }
 };
 
@@ -55,9 +77,15 @@ export const updatePost = (id, post) => async (dispatch) => {
 export const deletePost = (id) => async (dispatch) => {
   try {
     await api.deletePost(id);
-    dispatch({ type: postActionTypes.DELETE_POST_SUCCESS, payload: id });
+    dispatch({ 
+      type: postActionTypes.DELETE_POST_SUCCESS, 
+      payload: id 
+    });
   } catch (error) {
-    dispatch({ type: postActionTypes.DELETE_POST_FAILURE, payload: ERROR_MESSAGE });
+    dispatch({ 
+      type: postActionTypes.DELETE_POST_FAILURE, 
+      payload: ERROR_MESSAGE 
+    });
   }
 };
 
@@ -69,8 +97,14 @@ export const deletePost = (id) => async (dispatch) => {
 export const likePost = (id) => async (dispatch) => {
   try {
     const { data } = await api.likePost(id);
-    dispatch({ type: postActionTypes.UPDATE_POST_SUCCESS, payload: data });
+    dispatch({ 
+      type: postActionTypes.UPDATE_POST_SUCCESS, 
+      payload: data 
+    });
   } catch (error) {
-    dispatch({ type: postActionTypes.UPDATE_POST_FAILURE, payload: ERROR_MESSAGE });
+    dispatch({ 
+      type: postActionTypes.UPDATE_POST_FAILURE, 
+      payload: ERROR_MESSAGE 
+    });
   }
 };

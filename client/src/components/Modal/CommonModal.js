@@ -1,14 +1,12 @@
 import React from "react";
 import { Modal, Box, Button } from "@mui/material";
-import MemoryForm from "../Form/MemoryForm";
 import CloseIcon from "@mui/icons-material/Close";
 import useStyles from "./Styles";
 
-const MemoryModal = ({ open, setOpen, currentId, setCurrentId }) => {
+const CommonModal = ({ children, open, currentId, handleModal }) => {
   const classes = useStyles();
   const handleClose = () => {
-    setCurrentId(null);
-    setOpen(false);
+    handleModal( currentId ? currentId : null, false)
   };
 
   return (
@@ -30,14 +28,10 @@ const MemoryModal = ({ open, setOpen, currentId, setCurrentId }) => {
         >
           <CloseIcon />
         </Button>
-        <MemoryForm
-          currentId={currentId}
-          setCurrentId={setCurrentId}
-          setOpen={setOpen}
-        />
+        {children}
       </Box>
     </Modal>
   );
 };
 
-export default MemoryModal;
+export default CommonModal;

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import Post from './Post/Post';
 import { CircularProgress, Grid } from '@mui/material';
 
-const Posts = ({ setCurrentId }) => {
+const Posts = ({ handleModal }) => {
   const { loading, posts: postList } = useSelector((state) => state.posts);
   if (loading) {
     return <CircularProgress />;
@@ -14,7 +14,7 @@ const Posts = ({ setCurrentId }) => {
     <>
       {postList?.map((post) => (
         <Grid key={post?._id} item xs={12} sm={6} md={3}>
-          <Post post={post} setCurrentId={setCurrentId} />
+          <Post post={post} handleModal={handleModal}/>
         </Grid>
       ))}
     </>
