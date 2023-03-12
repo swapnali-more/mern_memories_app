@@ -1,28 +1,39 @@
 import axios from "axios";
 
-const url = "http://localhost:4000/posts";
+const urlPost = "http://localhost:4000/posts";
+const urlUser = "http://localhost:4000/users";
+
+const API = axios.create({baseURL: 'http://localhost:4000'})
 
 // Fetch all posts
 export const fetchPosts = () => {
-  return axios.get(url);
+  return API.get('/posts');
 }
 
 // Create a new post
 export const createPost = (newPost) => {
-  return axios.post(url, newPost);
+  return API.post('/posts', newPost);
 }
 
 // Update an existing post
 export const updatePost = (id, updatedPost) => {
-  return axios.patch(`${url}/${id}`, updatedPost);
+  return API.patch(`/posts/${id}`, updatedPost);
 }
 
 // Delete a post by id
 export const deletePost = (id) => {
-  return axios.delete(`${url}/${id}`);
+  return API.delete(`/posts/${id}`);
 }
 
 // Increment the like count of a post by id
 export const likePost = (id) => {
-  return axios.patch(`${url}/${id}/likePost`);
+  return API.patch(`/posts/${id}/likePost`);
+}
+
+export const createUser = (newUser) => {
+  return API.post('/users/create-user', newUser)
+}
+
+export const loginUser = (user) => {
+  return API.post('/users/login', user)
 }

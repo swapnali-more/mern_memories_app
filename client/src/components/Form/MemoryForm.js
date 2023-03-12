@@ -36,6 +36,8 @@ const MemoryForm = ({ currentId, handleModal }) => {
     },
   });
 
+  console.log(formik.values, "memory")
+
   const clearForm = () => formik.resetForm();
 
   return (

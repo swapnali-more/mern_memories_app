@@ -2,15 +2,20 @@ import React, { useCallback, useState } from 'react';
 import { AppBar, Avatar, Box, Button, Toolbar, Typography } from '@mui/material';
 import MemoriesIcon from '../../images/memories.png';
 import useStyles from './Styles';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import MemoryForm from '../Form/MemoryForm';
 import CommonModal from '../Modal/CommonModal';
 import AuthForm from '../Form/AuthForm';
+import { useDispatch } from 'react-redux';
 
 const Header = () => {
   const classes = useStyles();
   const [memoryFormOpen, setMemoryFormOpen] = useState(false);
   const [authFromOpen, setAuthFormOpen] = useState(false);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   // Open the modal when the user clicks the "Create Memory" button
   const handleMemoryFormOpen = () => setMemoryFormOpen(true);
@@ -24,6 +29,12 @@ const Header = () => {
   const handleModalAuth = useCallback(( authFromOpen) => {
     setAuthFormOpen(authFromOpen)
   }, [])
+
+  const logout = () => {
+    dispatch({ type: 'LOGOUT'});
+    navigate.push('/');
+    setUser(null)
+  }
 
   return (
     <AppBar position="relative" color="transparent" elevation={0} className={classes.appBar}>
@@ -45,15 +56,13 @@ const Header = () => {
         >
           Create Memory
         </Button>
-        {/* {user ? 
-        <Box>
-        <Avatar className={classes.purple} alt={user.name} src={user.imageUrl}>{user.name.charAt(0)}</Avatar>
-            <Typography className={classes.userName} variant="h6">{user.name}</Typography>
-            {/* <Button variant="contained" className={classes.logout} color="secondary" onClick={logout}>Logout</Button> 
+        {user ? 
+        <Box display="flex">
+        {/* <Avatar className={classes.purple} alt={user.name} src={user.imageUrl}>{user.name.charAt(0)}</Avatar> */}
+            <Typography className={classes.userName} variant="h6">{user?.result?.name}</Typography>
+            <Button variant="contained" size="small" className={classes.logout} color="secondary" onClick={logout}>Logout</Button> 
         </Box>
-         : */}
-        <>
-
+         :
           <Button
             size="small"
             color="secondary"
@@ -63,8 +72,7 @@ const Header = () => {
           >
             Login
           </Button>
-        </>
-        {/* } */}
+        }
       </Box>
 
       {/* Display the memory modal */}
