@@ -19,4 +19,9 @@ export default makeStyles({
     right: '20px',
     color: 'white',
   },
+  likes: {
+    '&.Mui-disabled': {
+      color: 'white !important'
+    }
+  }
 });

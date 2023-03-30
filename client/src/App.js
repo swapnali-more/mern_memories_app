@@ -7,7 +7,7 @@ function App() {
 
   return (
     <BrowserRouter>
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" sx={{ my: 2}}>
       {/* Display the app header */}
       <Header />
       <Routes>

@@ -104,7 +104,7 @@ const Post = ({ post, handleModal }) => {
           <CardActions sx={{ p: 0, mt: 2, justifyContent: "space-between" }}>
             <Button
               size="small"
-              color="primary"
+              color="primary" className={classes.likes}
               sx={{ textTransform: "capitalize", color: "#fff" }}
               disabled={!user?.result}
               onClick={() => dispatch(likePost(_id))}

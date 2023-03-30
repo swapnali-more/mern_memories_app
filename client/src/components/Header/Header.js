@@ -66,18 +66,17 @@ const Header = () => {
     }
     // Set user state from localStorage
     setUser(JSON.parse(localStorage.getItem('profile')));
-  }, [location, logout, user?.token]);
+  }, [location]);
 
   return (
-    <AppBar position="relative" color="transparent" elevation={0} className={classes.appBar}>
+    <AppBar position="relative" color="transparent" elevation={0} className={classes.appBar} sx={{ flexDirection: {md : 'row', xs: 'column'}}}>
       <Link to="/" className={classes.logoLink}>
-        <img className={classes.image} src={MemoriesIcon} alt="Memories" height="40" />
         <Typography variant="h4" align="center" sx={{ ml: 1, color: '#fff' }}>
-          Memories
+          Memories Blog
         </Typography>
       </Link>
 
-      <Box display="flex" alignItems="center">
+      <Box display="flex" alignItems="center" sx={{ mt: {md: 0, xs: 2}}}>
         {user ?
           <>
 
