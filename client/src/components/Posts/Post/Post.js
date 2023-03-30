@@ -14,27 +14,52 @@ import {
 import { deletePost, likePost } from "../../../redux/actions/posts";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import useStyles from "./Styles";
 
 const Post = ({ post, handleModal }) => {
   const classes = useStyles();
+  // Get the handleModal function from the modal action creator
   const dispatch = useDispatch();
 
+  // Get properties from the post object
   const {
     _id,
     title,
-    creator,
+    name,
     message,
     selectedFile,
     tags,
     createdAt,
-    likeCount,
   } = post;
 
+  // Define a function to handle the edit button click
   const editClickHandle = () => {
     handleModal(_id, true)
   }
+
+  // Get the user data from the local storage
+  const user = JSON.parse(localStorage.getItem('profile'))
+
+  // Define a function component for displaying the number of likes
+  const Likes = () => {
+    // Check if there are any likes for the post
+    if (post.likes.length > 0) {
+      // Check if the current user has already liked the post
+      return post.likes.find((like) => like === (user?.result?._id))
+        ? (
+          <>
+            <ThumbUpAltIcon fontSize="small" /> {post.likes.length > 2 ? `You and ${post.likes.length - 1} others` : `${post.likes.length} like${post.likes.length > 1 ? 's' : ''}` }
+          </>
+        ) : (
+          <>
+            <ThumbUpOffAltIcon fontSize="small" /> {post.likes.length} {post.likes.length === 1 ? 'Like' : 'Likes'}
+          </>
+        );
+    }
+    return <><ThumbUpOffAltIcon fontSize="small" />&nbsp;Like</>;
+  };
 
   return (
     <>
@@ -51,17 +76,19 @@ const Post = ({ post, handleModal }) => {
         />
         <Box className={classes.creatorDetail}>
           <Typography variant="h6">
-            {creator.charAt(0).toUpperCase() + creator.slice(1)}
+            {name && typeof name === 'string' && name.charAt(0).toUpperCase() + name.slice(1)}
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body1">
             {moment.utc(createdAt).fromNow()}
           </Typography>
         </Box>
-        <Box className={classes.editIcon}>
-          <IconButton aria-label="edit" onClick={editClickHandle}>
-            <EditIcon fontSize="small" style={{ color: "white" }} />
-          </IconButton>
-        </Box>
+        {user?.result?._id === post?.creator &&
+          <Box className={classes.editIcon}>
+            <IconButton aria-label="edit" onClick={editClickHandle}>
+              <EditIcon fontSize="small" style={{ color: "white" }} />
+            </IconButton>
+          </Box>
+        }
         <Box sx={{ p: 3 }}>
           <Typography variant="body2" sx={{ color: "#fff" }} component="h2">
             {tags.map((tag) => `#${tag} `)}
@@ -79,18 +106,21 @@ const Post = ({ post, handleModal }) => {
               size="small"
               color="primary"
               sx={{ textTransform: "capitalize", color: "#fff" }}
+              disabled={!user?.result}
               onClick={() => dispatch(likePost(_id))}
             >
-              <ThumbUpAltIcon fontSize="small" sx={{ mr: 1 }} /> Like {likeCount}{" "}
+              <Likes />
             </Button>
-            <Button
-              size="small"
-              color="primary"
-              sx={{ textTransform: "capitalize", color: "#fff" }}
-              onClick={() => dispatch(deletePost(_id))}
-            >
-              <DeleteIcon fontSize="small" sx={{ mr: 1 }} /> Delete
-            </Button>
+            {user?.result?._id === post?.creator &&
+              <Button
+                size="small"
+                color="primary"
+                sx={{ textTransform: "capitalize", color: "#fff" }}
+                onClick={() => dispatch(deletePost(_id))}
+              >
+                <DeleteIcon fontSize="small" sx={{ mr: 1 }} /> Delete
+              </Button>
+            }
           </CardActions>
         </Box>
       </Card>

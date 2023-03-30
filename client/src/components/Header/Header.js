@@ -1,40 +1,72 @@
-import React, { useCallback, useState } from 'react';
-import { AppBar, Avatar, Box, Button, Toolbar, Typography } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
+import { AppBar, Box, Button, Typography } from '@mui/material';
 import MemoriesIcon from '../../images/memories.png';
 import useStyles from './Styles';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import MemoryForm from '../Form/MemoryForm';
 import CommonModal from '../Modal/CommonModal';
 import AuthForm from '../Form/AuthForm';
 import { useDispatch } from 'react-redux';
+import { logoutUser } from '../../redux/actions/auth';
+import { toast } from 'react-toastify';
+import decode from 'jwt-decode';
 
 const Header = () => {
+  // Importing necessary hooks and functions
   const classes = useStyles();
   const [memoryFormOpen, setMemoryFormOpen] = useState(false);
   const [authFromOpen, setAuthFormOpen] = useState(false);
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
-
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const location = useLocation();
 
-  // Open the modal when the user clicks the "Create Memory" button
+  // Function to handle opening the "Create Memory" modal
   const handleMemoryFormOpen = () => setMemoryFormOpen(true);
-  // Open the modal when the user clicks the "Login" button
+
+  // Function to handle opening the "Login" modal
   const handleAuthFormOpen = () => setAuthFormOpen(true);
 
-  const handleModalMemory = useCallback(( memoryFormOpen) => {
+  // Function to handle setting the "Create Memory" modal state
+  const handleModalMemory = useCallback((memoryFormOpen) => {
     setMemoryFormOpen(memoryFormOpen)
   }, [])
 
-  const handleModalAuth = useCallback(( authFromOpen) => {
+  // Function to handle setting the "Login" modal state
+  const handleModalAuth = useCallback((authFromOpen) => {
     setAuthFormOpen(authFromOpen)
   }, [])
 
-  const logout = () => {
-    dispatch({ type: 'LOGOUT'});
-    navigate.push('/');
-    setUser(null)
-  }
+  // Function to handle user logout
+  const logout = useCallback(() => {
+    dispatch(logoutUser())
+      .then(() => {
+        // Success message and actions upon successful logout
+        toast.success("Logged out successfully!", {
+          autoClose: 2000,
+          onClose: () => {
+            localStorage.clear();
+            setUser(null);
+            window.location.reload();
+          },
+        });
+      })
+      .catch((error) => {
+        // Handle error message upon logout failure
+        toast.error(error);
+      });
+  });
+
+  // useEffect hook to handle token expiration and setting user state
+  useEffect(() => {
+    const token = user?.token;
+    // Check if token exists and is expired
+    if (token) {
+      const decodedToken = decode(token);
+      if (decodedToken.exp * 1000 < new Date().getTime()) logout();
+    }
+    // Set user state from localStorage
+    setUser(JSON.parse(localStorage.getItem('profile')));
+  }, [location, logout, user?.token]);
 
   return (
     <AppBar position="relative" color="transparent" elevation={0} className={classes.appBar}>
@@ -46,23 +78,25 @@ const Header = () => {
       </Link>
 
       <Box display="flex" alignItems="center">
-        <Toolbar></Toolbar>
-        <Button
-          size="small"
-          color="primary"
-          variant="contained"
-          sx={{ mr: 1, backgroundColor: '#240090', color: '#fff' }}
-          onClick={handleMemoryFormOpen}
-        >
-          Create Memory
-        </Button>
-        {user ? 
-        <Box display="flex">
-        {/* <Avatar className={classes.purple} alt={user.name} src={user.imageUrl}>{user.name.charAt(0)}</Avatar> */}
-            <Typography className={classes.userName} variant="h6">{user?.result?.name}</Typography>
-            <Button variant="contained" size="small" className={classes.logout} color="secondary" onClick={logout}>Logout</Button> 
-        </Box>
-         :
+        {user ?
+          <>
+
+            <Box display="flex">
+              {/* <Avatar className={classes.purple} alt={user.name} src={user.imageUrl}>{user.name.charAt(0)}</Avatar> */}
+              <Typography className={classes.userName} variant="h6" mr={1.5}>{user?.result?.name.charAt(0).toUpperCase() + user?.result?.name.slice(1)}</Typography>
+              <Button
+                size="small"
+                color="primary"
+                variant="contained"
+                sx={{ mr: 1.5, backgroundColor: '#240090', color: '#fff' }}
+                onClick={handleMemoryFormOpen}
+              >
+                Create Memory
+              </Button>
+              <Button variant="contained" size="small" className={classes.logout} color="secondary" onClick={logout}>Logout</Button>
+            </Box>
+          </>
+          :
           <Button
             size="small"
             color="secondary"
@@ -81,7 +115,7 @@ const Header = () => {
         handleModal={handleModalMemory}
       >
         <MemoryForm
-        handleModal={handleModalMemory}
+          handleModal={handleModalMemory}
         />
       </CommonModal>
       <CommonModal
@@ -89,7 +123,7 @@ const Header = () => {
         handleModal={handleModalAuth}
       >
         <AuthForm
-        //handleModal={handleModal}
+          handleModal={handleModalAuth}
         />
       </CommonModal>
     </AppBar>

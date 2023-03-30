@@ -1,9 +1,14 @@
 import axios from "axios";
 
-const urlPost = "http://localhost:4000/posts";
-const urlUser = "http://localhost:4000/users";
-
 const API = axios.create({baseURL: 'http://localhost:4000'})
+
+API.interceptors.request.use((req) => {
+  if(localStorage.getItem('profile')) {
+    req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`
+  }
+
+  return req;
+})
 
 // Fetch all posts
 export const fetchPosts = () => {

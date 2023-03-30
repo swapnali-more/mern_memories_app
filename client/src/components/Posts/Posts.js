@@ -1,12 +1,13 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Post from './Post/Post';
-import { CircularProgress, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
+import Loader from '../Loader/Loader';
 
 const Posts = ({ handleModal }) => {
   const { loading, posts: postList } = useSelector((state) => state.posts);
   if (loading) {
-    return <CircularProgress />;
+    return <Loader />
   }
 
   // render the posts

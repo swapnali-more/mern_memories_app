@@ -6,38 +6,65 @@ import * as Yup from "yup";
 import FileBase from "react-file-base64";
 import { createPost, updatePost } from "../../redux/actions/posts";
 import useStyles from "./Styles";
+import { toast } from 'react-toastify';
 
-const validationSchema = Yup.object({
-  creator: Yup.string().required("Creator is required"),
-  title: Yup.string().required("Title is required"),
-  message: Yup.string().required("Message is required"),
-  tags: Yup.array().min(1, "Tags is required"),
-  selectedFile: Yup.mixed().required("File is required"),
-});
-
+// Define the MemoryForm component that will handle creating and updating memory posts
 const MemoryForm = ({ currentId, handleModal }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const post = useSelector((state) => currentId ? state.posts.posts.find((p) => p._id === currentId) : null);
+  const user = JSON.parse(localStorage.getItem('profile'))
 
+  //Define form validation schema
+  const validationSchema = Yup.object({
+    title: Yup.string().required("Title is required"),
+    message: Yup.string().required("Message is required"),
+    tags: Yup.array().min(1, "Tags is required"),
+    selectedFile: Yup.mixed().required("File is required"),
+  });
+
+  // Use Formik to manage the form state and handle form submission
   const formik = useFormik({
     initialValues: {
-      creator: post?.creator || "",
       title: post?.title || "",
       message: post?.message || "",
       tags: post?.tags || [],
       selectedFile: post?.selectedFile || "",
     },
     validationSchema,
-    onSubmit: (values, { resetForm }) => {
-      currentId ? dispatch(updatePost(currentId, values)) : dispatch(createPost(values));
-      resetForm();
-      handleModal(null, false)
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        if (currentId) {
+          // Update existing post if currentId is provided
+          await dispatch(updatePost(currentId, { ...values, name: user?.result?.name }));
+          toast.success("Post updated successfully!", {
+            autoClose: 2000,
+            onClose: () => {
+              window.location.reload();
+              resetForm();
+              handleModal(null, false);
+            },
+          });
+        } else {
+          // Create new post if no currentId is provided
+          await dispatch(createPost({ ...values, name: user?.result?.name }));
+          toast.success("Post created successfully!", {
+            autoClose: 2000,
+            onClose: () => {
+              window.location.reload();
+              resetForm();
+              handleModal(null, false);
+            },
+          });
+        }
+      } catch (error) {
+        // Handle form submission error
+        toast.error(error.message);
+      }
     },
   });
 
-  console.log(formik.values, "memory")
-
+  // Define function to clear form fields
   const clearForm = () => formik.resetForm();
 
   return (
@@ -45,8 +72,8 @@ const MemoryForm = ({ currentId, handleModal }) => {
       <Box className={`${classes.root} ${classes.form}`} component="form" onSubmit={formik.handleSubmit}>
         <Typography variant="h6" mb={3}>{currentId ? "Edit Memory" : "Create Memory"}</Typography>
         <Grid container spacing={2}>
-          {["creator", "title", "message", "tags"].map((field) => (
-            <Grid item xs={12} md={field === 'message' ? 12 : 6 && field === 'tags' ? 12 : 6} key={field}>
+          {["title", "message", "tags"].map((field) => (
+            <Grid item xs={12} key={field}>
               <TextField key={field}
                 name={field}
                 variant="outlined"

@@ -15,5 +15,8 @@ export default makeStyles(() => ({
         alignItems: 'center',
         justifyContent: 'center',
         textDecoration: 'none'
+    },
+    userName: {
+        color: 'white'
     }
 }))
