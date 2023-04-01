@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+dbCredentials.js
 /.pnp
 .pnp.js
 

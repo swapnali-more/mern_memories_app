@@ -10,20 +10,24 @@ const postSchema = mongoose.Schema({
     type: String,
     required: true, // require a message for a post
   },
+  name: {
+    type: String,
+    required: true,
+  },
   creator: {
     type: String,
     required: true, // require a creator for a post
   },
-  tags: [String],
-  selectedFile: String,
-  likeCount: {
-    type: Number,
-    default: 0,
+  tags: [String], // require a tags for a post
+  selectedFile: String, // require a selectedFile for a post
+  likes: {
+    type: [String],
+    default: [], // require a likes for a post
   },
   createdAt: {
     type: Date,
-    default: new Date(),
-  },
+    default: new Date(), // require a createdAt for a post
+  }, 
 });
 
 // Create the PostMessage model
